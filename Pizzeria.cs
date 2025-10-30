@@ -10,6 +10,11 @@ namespace Pizzabestellung
         private String _name;
         private Pizza[] _speisekarte;
 
+        public string Name
+        {
+            get { return _name; }
+        }
+
         public Pizzeria(String Name, int Anzahl)
         {
             _name = Name;
@@ -19,6 +24,7 @@ namespace Pizzabestellung
         public Pizza[] Speisekarte
         {
             get { return _speisekarte; }
+            set { _speisekarte = value; }
         }
     }
 }

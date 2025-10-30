@@ -8,8 +8,8 @@ namespace Pizzabestellung
     public class Pizza
     {
         private string _Name;
-        private int _Preis;
-        public Pizza(string Name, int Preis)
+        private double _Preis;
+        public Pizza(string Name, double Preis)
         {
             _Name = Name;
             _Preis = Preis;
@@ -18,7 +18,7 @@ namespace Pizzabestellung
         {
             get { return _Name; }
         }
-        public int Preis
+        public double Preis
         {
             get { return _Preis; }
         }

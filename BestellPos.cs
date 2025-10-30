@@ -24,6 +24,6 @@ namespace Pizzabestellung
         public int Kartenindex
         {
             get { return _kartenindex; }
-        }
+        }   
     }
 }
