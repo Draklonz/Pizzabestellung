@@ -36,10 +36,17 @@ namespace Pizzabestellung
         private double BerechnePreis()
         {
             double preis = 0;
-            _pos.ForEach(position =>
+            foreach(BestellPos item in _pos)
             {
-                preis += _pizzeria.Speisekarte[position.Kartenindex].Preis * position.Anzahl;
-            });
+                if(item.Kartenindex <= _pizzeria.Speisekarte.Length)
+                {
+                    preis += _pizzeria.Speisekarte[item.Kartenindex].Preis * item.Anzahl;
+                }
+                else
+                {
+                    return 0;
+                }
+            };
             return preis;
         }
         public string DruckeBestellung()
@@ -47,13 +54,21 @@ namespace Pizzabestellung
             string output = "Der Kunde Nr. ";
             output += _kunde.Kundennummer;
             output += " hat für ";
-            output += Math.Round(BerechnePreis(), 2);
+            output += Math.Round(BerechnePreis(), 2).ToString("0.00");
             output += " Euro bestellt bei Pizzeria ";
             output += _pizzeria.Name;
-            output += ":\n";
+            output += ":";
             foreach (BestellPos item in _pos)
             {
-                output += "- " + _pizzeria.Speisekarte[item.Kartenindex].Name + " x " + item.Anzahl + "\n";
+                
+                if (item.Kartenindex <= _pizzeria.Speisekarte.Length)
+                {
+                    output += "\n" + item.Anzahl + "x " + _pizzeria.Speisekarte[item.Kartenindex].Name;
+                }
+                else
+                {
+                    return "0.00";
+                }
             }
             return output;
         }
