@@ -49,6 +49,34 @@ namespace Pizzabestellung
             };
             return preis;
         }
+
+        public static double berechnePreisMitRabatt(double preis, string rabattcode)
+        {
+            switch (rabattcode)
+            {
+                case "STUDENT10":
+                    preis -= preis * 0.1;
+                    preis = Math.Round(preis, 2, MidpointRounding.ToPositiveInfinity);
+                    return preis;
+                case "60MINUS12":
+                    if (preis >= 60.0)
+                    {
+                        preis -= preis * 0.12;
+                    }
+                    preis = Math.Round(preis, 2, MidpointRounding.ToPositiveInfinity);
+                    return preis;
+                case "TOPOrder":
+                    if(preis >= 150.0)
+                    {
+                        preis -= preis * 0.15;
+                    }
+                    preis = Math.Round(preis, 2, MidpointRounding.ToPositiveInfinity);
+                    return preis;
+                default:
+                    return preis;
+            }
+        }
+
         public string DruckeBestellung()
         {
             string output = "Der Kunde Nr. ";
