@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Transactions;
 
 namespace Pizzabestellung
 {
@@ -10,27 +11,58 @@ namespace Pizzabestellung
         private Pizzeria _pizzeria;
         private Kunde _kunde;
         private List<BestellPos> _pos;
+        private string _lieferadresse;
+        private string _rabattcode;
 
         public Bestellung(Pizzeria pizzeria, Kunde kunde)
         {
             _pizzeria = pizzeria;
             _kunde = kunde;
             _pos = new List<BestellPos>();
+            _lieferadresse = string.Empty;
+            _rabattcode = string.Empty;
         }
-        public void FuegePositionHinzu(int pizzanummer)
+        public string Lieferadresse
         {
+            get { return _lieferadresse; }
+            set { _lieferadresse = value; }
+        }
+        public string Rabattcode
+        {
+            get { return _rabattcode; }
+            set { _rabattcode = value; }
+        }
+        public void fuegePositionHinzu(int pizzanummer)
+        {
+            Pizzagroesse groesse = Pizzagroesse.normal;
             bool unique = true;
-            for (int i = 0; i < _pos.Count; i++)
+            foreach (BestellPos pos in _pos)
             {
-                if (_pos[i].Kartenindex == pizzanummer)
+                if (pos.Kartenindex == pizzanummer && pos.Groesse == groesse)
                 {
-                    _pos[i].Anzahl += 1;
+                    pos.Anzahl += 1;
                     unique = false; break;
                 }
             }
             if (unique)
             {
-                _pos.Add(new BestellPos(_pizzeria, pizzanummer));
+                _pos.Add(new BestellPos(_pizzeria, pizzanummer, groesse));
+            }
+        }
+        public void fuegePositionHinzu(int pizzanummer, Pizzagroesse groesse)
+        {
+            bool unique = true;
+            foreach (BestellPos pos in _pos)
+            {
+                if (pos.Kartenindex == pizzanummer && pos.Groesse == groesse)
+                {
+                    pos.Anzahl += 1;
+                    unique = false; break;
+                }
+            }
+            if (unique)
+            {
+                _pos.Add(new BestellPos(_pizzeria, pizzanummer, groesse));
             }
         }
         private double BerechnePreis()
@@ -40,7 +72,23 @@ namespace Pizzabestellung
             {
                 if(item.Kartenindex <= _pizzeria.Speisekarte.Length)
                 {
-                    preis += _pizzeria.Speisekarte[item.Kartenindex].Preis * item.Anzahl;
+                    double groessenFactor;
+                    switch (item.Groesse)
+                    {
+                        case Pizzagroesse.klein:
+                            groessenFactor = 0.75;
+                            break;
+                        case Pizzagroesse.normal:
+                            groessenFactor = 1;
+                            break;
+                        case Pizzagroesse.groß:
+                            groessenFactor = 1.33;
+                            break;
+                        default:
+                            groessenFactor = 1;
+                            break;
+                    }
+                    preis += _pizzeria.Speisekarte[item.Kartenindex].Preis * item.Anzahl * groessenFactor;
                 }
                 else
                 {
@@ -82,7 +130,7 @@ namespace Pizzabestellung
             string output = "Der Kunde Nr. ";
             output += _kunde.Kundennummer;
             output += " hat für ";
-            output += Math.Round(BerechnePreis(), 2).ToString("0.00");
+            output += Bestellung.berechnePreisMitRabatt(BerechnePreis(), _rabattcode).ToString("0.00");
             output += " Euro bestellt bei Pizzeria ";
             output += _pizzeria.Name;
             output += ":";

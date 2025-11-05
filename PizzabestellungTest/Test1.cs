@@ -24,31 +24,6 @@ namespace PizzabestellungTest
             // Erstellung der bestellung
             Bestellung order1 = new(pizzeria, kunde);
         }
-        private DataTable MakeTestTable()
-        {
-            // Create a new DataTable
-            DataTable testTable = new DataTable("test");
-
-            // Add column objects to the table.
-            testTable.Columns.Add("ID", typeof(int));
-            testTable.Columns.Add("Preis", typeof(double));
-            testTable.Columns.Add("Rabattcode", typeof(string));
-            testTable.Columns.Add("Ausgabe", typeof(double));
-
-            // Fill the Table with Data
-            testTable.Rows.Add(1, 24.90, "", 24.90);
-            testTable.Rows.Add(2, 24.90, "STUDENT10", 22.41);
-            testTable.Rows.Add(3, 24.90, "60MINUS12", 24.90);
-            testTable.Rows.Add(4, 73.70, "60MINUS12", 64.86);
-            testTable.Rows.Add(5, 180.10, "60MINUS12", 158.49);
-            testTable.Rows.Add(6, 180.10, "TOPOrder", 153.09);
-            testTable.Rows.Add(7, 180.10, "xxxxx", 180.10);
-            testTable.Rows.Add(8, 150.00, "TOPOrder", 127.50);
-            testTable.Rows.Add(9, 0.0, "Student10", 0.0);
-
-            // Return the new DataTable.
-            return testTable;
-        }
         [TestMethod]
         public void berechnePreisTest1()
         {
@@ -61,7 +36,7 @@ namespace PizzabestellungTest
             setupBestellung(pizzeria1, kunde1);
             Bestellung order1 = new(pizzeria1, kunde1);
             for (int i = 0; i < 3; i++)
-            { order1.FuegePositionHinzu(2);}
+            { order1.fuegePositionHinzu(2);}
 
             // Assert
             Assert.AreEqual(expectedOut, order1.DruckeBestellung());
@@ -77,9 +52,9 @@ namespace PizzabestellungTest
             // Act
             setupBestellung(pizzeria1, kunde1);
             Bestellung order1 = new(pizzeria1, kunde1);
-            order1.FuegePositionHinzu(0);
-            order1.FuegePositionHinzu(1);
-            order1.FuegePositionHinzu(2);
+            order1.fuegePositionHinzu(0);
+            order1.fuegePositionHinzu(1);
+            order1.fuegePositionHinzu(2);
 
             // Assert
             Assert.AreEqual(expectedOut, order1.DruckeBestellung());
@@ -110,9 +85,9 @@ namespace PizzabestellungTest
             // Act
             setupBestellung(pizzeria1, kunde1);
             Bestellung order1 = new(pizzeria1, kunde1);
-            order1.FuegePositionHinzu(0);
-            order1.FuegePositionHinzu(1);
-            order1.FuegePositionHinzu(4);
+            order1.fuegePositionHinzu(0);
+            order1.fuegePositionHinzu(1);
+            order1.fuegePositionHinzu(4);
 
             // Assert
             Assert.AreEqual(expectedOut, order1.DruckeBestellung());
