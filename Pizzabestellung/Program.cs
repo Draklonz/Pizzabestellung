@@ -24,10 +24,10 @@
 
             // Bestellung
             Bestellung order1 = new(pizzeria1, kunde1);
-            order1.fuegePositionHinzu(2);
-            order1.fuegePositionHinzu(0);
-            order1.fuegePositionHinzu(2);
-            order1.fuegePositionHinzu(1);
+            order1.FuegePositionHinzu(2);
+            order1.FuegePositionHinzu(0);
+            order1.FuegePositionHinzu(2);
+            order1.FuegePositionHinzu(1);
 
             Console.WriteLine(order1.DruckeBestellung());
         }

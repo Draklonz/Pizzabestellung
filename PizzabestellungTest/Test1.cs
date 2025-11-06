@@ -36,7 +36,7 @@ namespace PizzabestellungTest
             setupBestellung(pizzeria1, kunde1);
             Bestellung order1 = new(pizzeria1, kunde1);
             for (int i = 0; i < 3; i++)
-            { order1.fuegePositionHinzu(2);}
+            { order1.FuegePositionHinzu(2);}
 
             // Assert
             Assert.AreEqual(expectedOut, order1.DruckeBestellung());
@@ -52,9 +52,9 @@ namespace PizzabestellungTest
             // Act
             setupBestellung(pizzeria1, kunde1);
             Bestellung order1 = new(pizzeria1, kunde1);
-            order1.fuegePositionHinzu(0);
-            order1.fuegePositionHinzu(1);
-            order1.fuegePositionHinzu(2);
+            order1.FuegePositionHinzu(0);
+            order1.FuegePositionHinzu(1);
+            order1.FuegePositionHinzu(2);
 
             // Assert
             Assert.AreEqual(expectedOut, order1.DruckeBestellung());
@@ -85,9 +85,9 @@ namespace PizzabestellungTest
             // Act
             setupBestellung(pizzeria1, kunde1);
             Bestellung order1 = new(pizzeria1, kunde1);
-            order1.fuegePositionHinzu(0);
-            order1.fuegePositionHinzu(1);
-            order1.fuegePositionHinzu(4);
+            order1.FuegePositionHinzu(0);
+            order1.FuegePositionHinzu(1);
+            order1.FuegePositionHinzu(4);
 
             // Assert
             Assert.AreEqual(expectedOut, order1.DruckeBestellung());
@@ -120,7 +120,7 @@ namespace PizzabestellungTest
                 double preis = (double)row["Preis"];
                 string rabattcode = row["Rabattcode"].ToString();
                 double expectedOut = (double)row["Ausgabe"];
-                double output = Bestellung.berechnePreisMitRabatt(preis, rabattcode);
+                double output = Bestellung.BerechnePreisMitRabatt(preis, rabattcode);
                 Assert.AreEqual(expectedOut, output);
             }
         }
