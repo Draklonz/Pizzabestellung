@@ -15,9 +15,9 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Pizzabestellung.Pizzeria">
-    <Position X="3.5" Y="3.75" Width="1.5" />
+    <Position X="3.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAIAABAAAAAAAAAAAAAAQAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAIAABAAAAAAAAAAAAAAQAEAAAAEAEAAAAAAAAAAA=</HashCode>
       <FileName>Pizzeria.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -25,9 +25,9 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Pizzabestellung.Bestellung">
-    <Position X="3.5" Y="0.5" Width="1.5" />
+    <Position X="3.5" Y="0.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAEQBAAAAQAAAAAAAAAQA=</HashCode>
+      <HashCode>AAAAAAAAAAABAAQAAAAAEQBIEQBAACAQAAAAAAAAAQA=</HashCode>
       <FileName>Bestellung.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -36,9 +36,9 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Pizzabestellung.BestellPos">
-    <Position X="6.75" Y="3.75" Width="1.5" />
+    <Position X="6.75" Y="3.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAABAAAAAAAAAIAAAAAQAAAAAAAAAAAAIAAAAAAAAQA=</HashCode>
+      <HashCode>AAABAAAAAAAAAIAAAAQQCIBAAAACAAAAIAAAABCAQQA=</HashCode>
       <FileName>BestellPos.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>

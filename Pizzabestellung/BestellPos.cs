@@ -18,15 +18,6 @@ namespace Pizzabestellung
         private int _anzahl;
         private Pizzagroesse _groesse;
         private readonly List<int> _zutatenindex;
-        //legacy Methode
-        public BestellPos(Pizzeria Name, int index)
-        {
-            _pizzeria = Name;
-            _kartenindex = index;
-            _anzahl = 1;
-            _groesse = Pizzagroesse.normal;
-            _zutatenindex = [];
-        }
         public BestellPos(Pizzeria Name, int index, Pizzagroesse groesse)
         {
             _pizzeria = Name;
@@ -35,11 +26,19 @@ namespace Pizzabestellung
             _groesse = groesse;
             _zutatenindex = [];
         }
+        public Pizzeria Pizzeria
+        {
+            get { return _pizzeria; }
+        }
         public int Anzahl
             { 
             get { return _anzahl; }
             set { _anzahl = value; }
             }
+        public Pizza Pizza
+        {
+            get { return _pizzeria.Speisekarte[_kartenindex]; }
+        }
         public int Kartenindex
         {
             get { return _kartenindex; }
@@ -49,6 +48,7 @@ namespace Pizzabestellung
             get { return _groesse; }
             set { _groesse = value; }
         }
+
         public List<int> ExtraZutat
         {
             get { return _zutatenindex; }
@@ -61,35 +61,51 @@ namespace Pizzabestellung
         {
             _zutatenindex.Remove(_zutatenindex[position]);
         }
+        private double GetGroessenFaktor()
+        {
+            double groessenFaktor;
+            switch (_groesse)
+            {
+                case Pizzagroesse.klein:
+                    groessenFaktor = 0.75;
+                    break;
+                case Pizzagroesse.normal:
+                    groessenFaktor = 1;
+                    break;
+                case Pizzagroesse.groß:
+                    groessenFaktor = 1.33;
+                    break;
+                default:
+                    groessenFaktor = 1;
+                    break;
+            }
+            return groessenFaktor;
+        }
         public double BerechnePosPreis()
         {
             double preis = 0;
-            double groessenFactor;
+
             if (_kartenindex < _pizzeria.Speisekarte.Length)
             {
-                preis = _pizzeria.Speisekarte[_kartenindex].Preis;
+                preis = _pizzeria.Speisekarte[_kartenindex].Preis * GetGroessenFaktor();
                 foreach (int zutat in _zutatenindex)
                 {
                     preis += _pizzeria.ExtraZutaten[zutat].Preis;
                 }
-                switch (_groesse)
-                {
-                    case Pizzagroesse.klein:
-                        groessenFactor = 0.75;
-                        break;
-                    case Pizzagroesse.normal:
-                        groessenFactor = 1;
-                        break;
-                    case Pizzagroesse.groß:
-                        groessenFactor = 1.33;
-                        break;
-                    default:
-                        groessenFactor = 1;
-                        break;
-                }
-                preis = preis * _anzahl * groessenFactor;
+
+                preis = preis * _anzahl;
             }
             return preis;
+        }
+        public string DruckePos()
+        {
+            string output = string.Empty;
+            output = $"\n- {_anzahl}x {_pizzeria.Speisekarte[_kartenindex].Name} {_groesse}  {(_pizzeria.Speisekarte[_kartenindex].Preis * GetGroessenFaktor()):0.00}€";
+            foreach (int pos in _zutatenindex)
+            {
+                output += $"\n      extra {_pizzeria.ExtraZutaten[pos].Name}  {_pizzeria.ExtraZutaten[pos].Preis:0.00}€";
+            }
+            return output;
         }
     }
 }

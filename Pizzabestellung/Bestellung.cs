@@ -22,6 +22,10 @@ namespace Pizzabestellung
             _lieferadresse = string.Empty;
             _rabattcode = string.Empty;
         }
+        public Pizzeria Pizzeria
+        {
+            get { return _pizzeria; }
+        }
         public string Lieferadresse
         {
             get { return _lieferadresse; }
@@ -31,6 +35,10 @@ namespace Pizzabestellung
         {
             get { return _rabattcode; }
             set { _rabattcode = value; }
+        }
+        public List<BestellPos> BestellPosList
+        {
+            get { return _pos; }
         }
         public void FuegePositionHinzu(int pizzanummer)
         {
@@ -52,19 +60,22 @@ namespace Pizzabestellung
         public void FuegePositionHinzu(int pizzanummer, Pizzagroesse groesse)
         {
             bool unique = true;
-            foreach (BestellPos pos in _pos)
+            if (pizzanummer < _pizzeria.Speisekarte.Length)
             {
-                if (pos.Kartenindex == pizzanummer && 
-                    pos.Groesse == groesse && 
-                    pos.ExtraZutat.Count == 0)
+                foreach (BestellPos pos in _pos)
                 {
-                    pos.Anzahl += 1;
-                    unique = false; break;
+                    if (pos.Kartenindex == pizzanummer &&
+                        pos.Groesse == groesse &&
+                        pos.ExtraZutat.Count == 0)
+                    {
+                        pos.Anzahl += 1;
+                        unique = false; break;
+                    }
                 }
-            }
-            if (unique)
-            {
-                _pos.Add(new BestellPos(_pizzeria, pizzanummer, groesse));
+                if (unique)
+                {
+                    _pos.Add(new BestellPos(_pizzeria, pizzanummer, groesse));
+                }
             }
         }
         public void EntfernePosition(int position)
@@ -87,21 +98,21 @@ namespace Pizzabestellung
             {
                 case "STUDENT10":
                     preis -= preis * 0.1;
-                    preis = Math.Round(preis, 2, MidpointRounding.ToPositiveInfinity);
+                    preis = Math.Round(preis, 2, MidpointRounding.AwayFromZero);
                     return preis;
                 case "60MINUS12":
                     if (preis >= 60.0)
                     {
                         preis -= preis * 0.12;
                     }
-                    preis = Math.Round(preis, 2, MidpointRounding.ToPositiveInfinity);
+                    preis = Math.Round(preis, 2, MidpointRounding.AwayFromZero);
                     return preis;
                 case "TOPOrder":
                     if(preis >= 150.0)
                     {
                         preis -= preis * 0.15;
                     }
-                    preis = Math.Round(preis, 2, MidpointRounding.ToPositiveInfinity);
+                    preis = Math.Round(preis, 2, MidpointRounding.AwayFromZero);
                     return preis;
                 default:
                     return preis;
@@ -110,6 +121,10 @@ namespace Pizzabestellung
 
         public string DruckeBestellung()
         {
+            if (_pos.Count == 0)
+            {
+                return "0.00";
+            }
             string output = "Der Kunde Nr. ";
             output += _kunde.Kundennummer;
             output += " hat für ";
@@ -119,15 +134,7 @@ namespace Pizzabestellung
             output += ":";
             foreach (BestellPos item in _pos)
             {
-                
-                if (item.Kartenindex <= _pizzeria.Speisekarte.Length)
-                {
-                    output += "\n" + item.Anzahl + "x " + _pizzeria.Speisekarte[item.Kartenindex].Name;
-                }
-                else
-                {
-                    return "0.00";
-                }
+                    output += item.DruckePos();
             }
             return output;
         }

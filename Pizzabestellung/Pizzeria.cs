@@ -16,11 +16,11 @@ namespace Pizzabestellung
             get { return _name; }
         }
 
-        public Pizzeria(String Name, int AnzahlPizzen, Zutat[] AnzahlExtraZutaten)
+        public Pizzeria(String Name, int AnzahlPizzen, int AnzahlExtraZutaten)
         {
             _name = Name;
             _speisekarte = new Pizza[AnzahlPizzen];
-            _extraZutaten = AnzahlExtraZutaten;
+            _extraZutaten = new Zutat[AnzahlExtraZutaten];
         }
 
         public Pizza[] Speisekarte
