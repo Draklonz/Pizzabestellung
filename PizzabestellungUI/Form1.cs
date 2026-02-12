@@ -1,51 +1,118 @@
+using MySql.Data.MySqlClient;
+using System.Data;
 using Pizzabestellung;
 
 namespace PizzabestellungUI
 {
+
     public partial class Form1 : Form
     {
+        const string connectorstring = "Server=localhost;Database=pizzabestellung_jonas;Uid=root;Pwd=Ich_1998;";
+
         private Bestellung bestellung;
+        private Pizzeria pizzeria1;
         public Form1()
         {
-            InitializeComponent();
-            // Erstellen neuer Pizzen und extra Zutaten
-            Pizza[] pizzen = new Pizza[3];
-            pizzen[0] = new("Margerita", 7.90);
-            pizzen[1] = new("Salami", 8.90);
-            pizzen[2] = new("Fungi", 8.90);
 
-            Zutat[] zutaten = new Zutat[4];
-            zutaten[0] = new("Käse", 0.5);
-            zutaten[1] = new("Salami", 1.0);
-            zutaten[2] = new("Pilz", 1.0);
-            zutaten[3] = new("Shrimp", 1.5);
+            InitializeComponent();
+
+            //Zutat[] zutaten = new Zutat[4];
+            //zutaten[0] = new("Käse", 0.5);
+            //zutaten[1] = new("Salami", 1.0);
+            //zutaten[2] = new("Pilz", 1.0);
+            //zutaten[3] = new("Shrimp", 1.5);
 
             // Erstellen einer Pizzeria
-            Pizzeria pizzeria1 = new("daFranco", 3, 4);
-            FillSpeisekarte(pizzen);
-            for (int i = 0; i < pizzen.Length; i++)
+            pizzeria1 = new("daFranco", 6, 4);
+            FillSpeisekarte();
+            //for (int i = 0; i < pizzen.Length; i++)
+            //{
+            //    pizzeria1.Speisekarte[i] = pizzen[i];
+            //}
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    pizzeria1.ExtraZutaten[i] = zutaten[i];
+            //}
+            Kunde kunde1 = new(9966);
+            using (var connection = new MySqlConnection(connectorstring))
             {
-                pizzeria1.Speisekarte[i] = pizzen[i];
+                // Datenbank-Kommando zusammenbauen
+                MySqlCommand command = connection.CreateCommand();
+                command.CommandText = "SELECT MAX(BNR) FROM Bestellungen;";
+                command.CommandType = CommandType.Text;
+
+                try
+                {
+                    connection.Open(); // Verbindung öffnen
+                    MySqlDataReader reader = command.ExecuteReader(); // SQL-Befehl ausführen
+                    reader.Read();
+                    bestellung = new(pizzeria1, kunde1, Convert.ToInt32(reader[0]) + 1);
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                Console.ReadLine();
             }
-            for (int i = 0; i < 4; i++)
-            {
-                pizzeria1.ExtraZutaten[i] = zutaten[i];
-            }
-            Kunde kunde1 = new(123456);
-            bestellung = new(pizzeria1, kunde1);
 
         }
-        public void FillSpeisekarte(Pizza[] PizzaArray)
+        public void FillSpeisekarte()
         {
-            Speisekarte.Items.Clear();
-            foreach (Pizza p in PizzaArray)
-            {
-                var item = new ListViewItem(p.Name);
-                item.SubItems.Add($"{p.Preis:0.00} €");
+            Speisekarte.BeginUpdate();
 
-                Speisekarte.Items.Add(item);
+            // ListView leeren            
+            Speisekarte.Items.Clear();
+            Speisekarte.Columns.Clear();
+            using (var connection = new MySqlConnection(connectorstring))
+            {
+                // Datenbank-Kommando zusammenbauen
+                MySqlCommand command = connection.CreateCommand();
+                command.CommandText = "SELECT * FROM PIZZEN;";
+                command.CommandType = CommandType.Text;
+
+                try
+                {
+                    connection.Open(); // Verbindung öffnen
+                    MySqlDataReader reader = command.ExecuteReader(); // SQL-Befehl ausführen
+
+                    // Tabellenüberschriften in die ListView schreiben
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        string columnName = reader.GetName(i);
+                        Speisekarte.Columns.Add(columnName, Speisekarte.Width / reader.FieldCount, HorizontalAlignment.Left);
+                    }
+
+                    // Datensätze auf dem Reader lesen und in ListViewItems schreiben
+                    int p = 0;
+                    while (reader.Read())
+                    {
+                        if (reader.FieldCount > 0)
+                        {
+                            ListViewItem lvi = new ListViewItem(reader[0].ToString());
+
+                            for (int i = 1; i < reader.FieldCount; i++)
+                            {
+                                lvi.SubItems.Add(reader[i].ToString());
+
+                            }
+                            pizzeria1.Speisekarte[p] = new Pizza(reader[1].ToString(), Decimal.ToDouble((decimal)reader[2]));
+                            p++;
+                            Speisekarte.Items.Add(lvi);
+                        }
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                Console.ReadLine();
+
             }
+            Speisekarte.EndUpdate();
         }
+
         private void AktualisiereBestellListe()
         {
             BestellListe.Items.Clear();
@@ -98,21 +165,68 @@ namespace PizzabestellungUI
 
         private void buttonBestell_Click(object sender, EventArgs e)
         {
+            if (textBoxRabatt != null)
+            {
+                bestellung.Rabattcode = textBoxRabatt.Text;
+            }
             if (textBox1.Text == "")
             {
                 textBox1.BackColor = Color.Red;
             }
             else
             {
-                string adresse = textBox1.Text;
-                string text = bestellung.DruckeBestellung();
-                text += "\nLieferadresse: " + adresse;
-                DialogResult result = MessageBox.Show(text, "Bestellung");
-                if (result == DialogResult.OK)
+                using (var connection = new MySqlConnection(connectorstring))
                 {
-                    this.Close();
+                    // Datenbank-Kommando zusammenbauen
+                    MySqlCommand command = connection.CreateCommand();
+                    command.CommandText = $"INSERT INTO Bestellungen (BNR, KNR, Datum, Rabatt) VALUES ({bestellung.Bestellnummer}, {bestellung.Kunde.Kundennummer}, @datum, \"{bestellung.Rabattcode}\");";
+                    command.Parameters.Add("@datum", MySqlDbType.Date).Value = DateTime.Today;
+                    command.CommandType = CommandType.Text;
+
+                    connection.Open(); // Verbindung öffnen
+                    MySqlDataReader reader = command.ExecuteReader(); // SQL-Befehl ausführen
+                    reader.Close();
+                    foreach (BestellPos pos in bestellung.BestellPosList)
+                    {
+                        command.CommandText = $"INSERT INTO Bestelllisten (BNR, PNR, Anzahl) VALUES ({bestellung.Bestellnummer}, {pos.Kartenindex + 1}, {pos.Anzahl});";
+                        command.CommandType = CommandType.Text;
+
+                        try
+                        {
+                            reader = command.ExecuteReader(); // SQL-Befehl ausführen
+                            reader.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        Console.ReadLine();
+                    }
+
+
+
+                    string adresse = (textBox1.Text);
+                    string text = bestellung.DruckeBestellung();
+                    text += "\nLieferadresse: " + adresse;
+                    DialogResult result = MessageBox.Show(text, "Bestellung");
+                    if (result == DialogResult.OK)
+                    {
+                        this.Close();
+                    }
                 }
             }
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonBestellHistorie_Click(object sender, EventArgs e)
+        {
+            var myForm3 = new Form3(connectorstring);
+            myForm3.FormClosed += Form2_FormClosed;
+            myForm3.Show();
         }
     }
 }

@@ -35,7 +35,7 @@
             Kunde kunde1 = new(123456);
 
             // Bestellung
-            Bestellung order1 = new(pizzeria1, kunde1);
+            Bestellung order1 = new(pizzeria1, kunde1, 11111);
             order1.FuegePositionHinzu(2);
             order1.FuegePositionHinzu(0);
             order1.BestellPosList[1].FuegeZutatHinzu(2);

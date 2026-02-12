@@ -47,6 +47,9 @@
             textBox1 = new TextBox();
             label2 = new Label();
             buttonBestell = new Button();
+            label3 = new Label();
+            textBoxRabatt = new TextBox();
+            buttonBestellHistorie = new Button();
             groupGroesse.SuspendLayout();
             SuspendLayout();
             // 
@@ -195,7 +198,7 @@
             // 
             // buttonBestell
             // 
-            buttonBestell.Location = new Point(773, 556);
+            buttonBestell.Location = new Point(658, 592);
             buttonBestell.Name = "buttonBestell";
             buttonBestell.Size = new Size(112, 34);
             buttonBestell.TabIndex = 8;
@@ -203,11 +206,41 @@
             buttonBestell.UseVisualStyleBackColor = true;
             buttonBestell.Click += buttonBestell_Click;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(31, 567);
+            label3.Name = "label3";
+            label3.Size = new Size(103, 25);
+            label3.TabIndex = 10;
+            label3.Text = "Rabattcode";
+            // 
+            // textBoxRabatt
+            // 
+            textBoxRabatt.Location = new Point(31, 595);
+            textBoxRabatt.Name = "textBoxRabatt";
+            textBoxRabatt.Size = new Size(460, 31);
+            textBoxRabatt.TabIndex = 9;
+            textBoxRabatt.TextChanged += textBox2_TextChanged;
+            // 
+            // buttonBestellHistorie
+            // 
+            buttonBestellHistorie.Location = new Point(658, 515);
+            buttonBestellHistorie.Name = "buttonBestellHistorie";
+            buttonBestellHistorie.Size = new Size(112, 34);
+            buttonBestellHistorie.TabIndex = 11;
+            buttonBestellHistorie.Text = "Bestellen";
+            buttonBestellHistorie.UseVisualStyleBackColor = true;
+            buttonBestellHistorie.Click += buttonBestellHistorie_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1142, 887);
+            Controls.Add(buttonBestellHistorie);
+            Controls.Add(label3);
+            Controls.Add(textBoxRabatt);
             Controls.Add(buttonBestell);
             Controls.Add(label2);
             Controls.Add(textBox1);
@@ -246,5 +279,8 @@
         private TextBox textBox1;
         private Label label2;
         private Button buttonBestell;
+        private Label label3;
+        private TextBox textBoxRabatt;
+        private Button buttonBestellHistorie;
     }
 }

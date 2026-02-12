@@ -1,30 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Transactions;
+using MySql.Data.MySqlClient;
 
 namespace Pizzabestellung
 {
+
     public class Bestellung
     {
+        const string connectorstring = "Server=localhost;Database=pizzabestellung_jonas;Uid=root;Pwd=Ich_1998;";
         private readonly Pizzeria _pizzeria;
         private readonly Kunde _kunde;
         private readonly List<BestellPos> _pos;
         private string _lieferadresse;
         private string _rabattcode;
+        private int _bestellnummer;
 
-        public Bestellung(Pizzeria pizzeria, Kunde kunde)
+        public Bestellung(Pizzeria pizzeria, Kunde kunde, int bestellnummer)
         {
             _pizzeria = pizzeria;
             _kunde = kunde;
             _pos = [];
             _lieferadresse = string.Empty;
             _rabattcode = string.Empty;
+            _bestellnummer = bestellnummer;
+        }
+        public int Bestellnummer
+        {
+            get { return _bestellnummer; }
         }
         public Pizzeria Pizzeria
         {
             get { return _pizzeria; }
+        }
+        public Kunde Kunde
+        {
+            get { return _kunde; }
         }
         public string Lieferadresse
         {
@@ -56,6 +70,7 @@ namespace Pizzabestellung
             {
                 _pos.Add(new BestellPos(_pizzeria, pizzanummer, groesse));
             }
+
         }
         public void FuegePositionHinzu(int pizzanummer, Pizzagroesse groesse)
         {
@@ -77,7 +92,7 @@ namespace Pizzabestellung
                     _pos.Add(new BestellPos(_pizzeria, pizzanummer, groesse));
                 }
             }
-        }
+            }
         public void EntfernePosition(int position)
         {
             _pos.Remove(_pos[position]);
